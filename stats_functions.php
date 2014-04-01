@@ -1,5 +1,6 @@
 <?php
 session_start();
+include('database_connection.php');
 if($_POST['stats'] == '1v1')
 {
 	gen_1v1_stats();
@@ -41,11 +42,7 @@ elseif($_POST['newmatch'] == '2v2')
 	gen_2v2_form();
 }
 
-function db_connect()
-{
-	$db = mysqli_connect("localhost", "stats", "****", "stats"); 
-	return $db;
-}
+
 function recent_1v1()
 {
 	$db = db_connect();

@@ -1,5 +1,5 @@
 <?php
-include('stats_functions.php');
+include('database_connection.php');
 session_start();
 $response = array();
 

@@ -7,7 +7,7 @@ if($_POST['stats'] == '1v1')
 }
 elseif($_POST['player'] == 'p2')
 {
-	get_player_2(($_POST['pid']));
+	get_player_2((int)($_POST['pid']));
 }
 elseif($_POST['newmatch'] == '1v1')
 {
@@ -19,7 +19,7 @@ elseif($_POST['newmatch'] == '2v1')
 }
 elseif($_POST['player'] == 'solo')
 {
-	get_solo_players( ($_POST['tid']) );
+	get_solo_players( (int)($_POST['tid']) );
 }
 elseif($_POST['stats'] == '2v1')
 {
@@ -35,7 +35,7 @@ elseif($_POST['stats'] == '2v2')
 }
 elseif($_POST['player'] == '2v2')
 {
-	get_team_2( ($_POST['tid']) );
+	get_team_2( (int)($_POST['tid']) );
 }
 elseif($_POST['newmatch'] == '2v2')
 {
@@ -50,7 +50,8 @@ function recent_1v1()
 				FROM one_v_one, players p1, players p2
 				WHERE p1.player_id = player_one
 				AND   p2.player_id = player_two
-				ORDER BY date DESC LIMIT 5;";
+				ORDER BY match_id DESC LIMIT 5;";
+				
 	$result = mysqli_query($db, $query);
 	while($row = mysqli_fetch_array($result))
 	{
@@ -254,7 +255,10 @@ function gen_1v1_stats()
 			}
 		}
 		$total=$wins + $loss;
-		$winper=$wins/$total;
+		if($total == 0)
+			$winper = 0;
+		else
+			$winper=$wins/$total;
 		$winper=number_format($winper,2);
 		//generate row of table stats here.
 		if($total > 0)
@@ -483,7 +487,10 @@ function gen_2v1_stats()
 			}
 		}
 		$total=$wins + $loss;
-		$winper=$wins/$total;
+		if($total == 0)
+			$winper = 0;
+		else
+			$winper=$wins/$total;
 		$winper=number_format($winper,2);
 		//generate row of table stats here.
 		if($total > 0)
@@ -819,7 +826,10 @@ function gen_overall_stats()
 		//end 2v2
 
 		$total=$wins + $loss;
-		$winper=$wins/$total;
+		if($total == 0)
+			$winper = 0;
+		else
+			$winper=$wins/$total;
 		$winper=number_format($winper,2);
 		//generate row of table stats here.
 		if($total > 0)

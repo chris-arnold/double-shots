@@ -77,6 +77,7 @@ session_start();
 								<li><a href="#addgame" id="addgame-link" class="skel-panels-ignoreHref"><span class="fa fa-magic">Add Game</span></a></li>
 								<li><a href="#stats" id="stats-link" class="skel-panels-ignoreHref"><span class="fa fa-trophy">Stats</span></a></li>
 								<li><a href="#archive" id="archive-link" class="skel-panels-ignoreHref"><span class="fa fa-archive">Browse Games</span></a></li>
+								<li><a href="admin.php"><span class="fa fa-wrench">Admin</span></a></li>
 							</ul>
 						</nav>
 						
@@ -86,9 +87,9 @@ session_start();
 
 					<!-- Social Icons -->
 						<ul class="icons">
-							<li><a href="#" class="fa fa-sign-in solo"><span>Sign In</span></a></li>
+							<li><a href="login.php" class="fa fa-sign-in solo"><span>Sign In</span></a></li>
 							<li><a href="#" class="fa fa-level-up solo"><span>Create Account</span></a></li>
-							<li><a href="#" class="fa fa-sign-out solo"><span>Sign Out</span></a></li>
+							<li><a href="logout.php" class="fa fa-sign-out solo"><span>Sign Out</span></a></li>
 						</ul>
 				
 				</div>
@@ -152,6 +153,7 @@ session_start();
 							<input type="button" class="button" id="addtwovone" value="2 v 1"/>
 							<input type="button" class="button" id="addtwovtwo" value="2 v 2"/>
 							<input type="button" class="button" id="clear" value="Clear"/>
+							<!-- <div class="table"> -->
 							<div id="add_a_game">
 
 
@@ -179,6 +181,16 @@ session_start();
 							<input type="button" class="button" id="overall" value="Overall"/>
 						</br>
 							<table id="statstable">
+								<!-- <thead>
+								<tr bgcolor="#FFCC33">
+									<th valign="top" class="bodyblack_bold">Player</th>
+									<th valign="top" class="bodyblack_bold">Wins</th>
+									<th valign="top" class="bodyblack_bold">Loss</th>
+									<th valign="top" class="bodyblack_bold">Win %</th>
+									<th valign="top" class="bodyblack_bold">PF</th>
+									<th valign="top" class="bodyblack_bold">PA</th>
+								</tr>
+								</thead> -->
 							</table>
 
 							<footer>
@@ -199,9 +211,10 @@ session_start();
 							<input type="button" class="button" id="onevone_archive" value="1 v 1"/>
 							<input type="button" class="button" id="twovone_archive" value="2 v 1"/>
 							<input type="button" class="button" id="twovtwo_archive" value="2 v 2"/>
+							<input type="button" class="button" id="clear_archive" value="Clear"/>
+							<div id="archive_table">
 
-						<p>Archived games. Area to browse previous games. Split up by game type and sortable via player.
-							Limit to groups of 20. Sortable tables.</p>	
+							</div>
 
 						</div>
 					</section>

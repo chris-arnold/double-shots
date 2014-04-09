@@ -41,7 +41,48 @@ elseif($_POST['newmatch'] == '2v2')
 {
 	gen_2v2_form();
 }
-
+elseif($_POST['archive'] == '1v1')
+{
+	gen_1v1_archive(1);
+}
+elseif($_POST['archive'] == '2v1')
+{
+	gen_2v1_archive(1);
+}
+elseif($_POST['archive'] == '2v2')
+{
+	gen_2v2_archive(1);
+}
+elseif($_POST['archive'] == 'previous_1v1')
+{
+	$page = (int)($_POST['page']);
+	gen_1v1_archive($page-1);
+}
+elseif($_POST['archive'] == 'next_1v1')
+{
+	$page = (int)($_POST['page']);
+	gen_1v1_archive($page+1);
+}
+elseif($_POST['archive'] == 'previous_2v1')
+{
+	$page = (int)($_POST['page']);
+	gen_2v1_archive($page-1);
+}
+elseif($_POST['archive'] == 'next_2v1')
+{
+	$page = (int)($_POST['page']);
+	gen_2v1_archive($page+1);
+}
+elseif($_POST['archive'] == 'previous_2v2')
+{
+	$page = (int)($_POST['page']);
+	gen_2v2_archive($page-1);
+}
+elseif($_POST['archive'] == 'next_2v2')
+{
+	$page = (int)($_POST['page']);
+	gen_2v2_archive($page+1);
+}
 
 function recent_1v1()
 {
@@ -860,6 +901,247 @@ function gen_overall_stats()
 			}
 
 	}
+	echo $table;
+}
+
+function gen_1v1_archive( $page )
+{
+	$db = db_connect();
+	$perpage = 20;
+	$min = ($page-1) * $perpage;
+	$query = "SELECT count(*) as entries FROM one_v_one;";
+	$result1 = mysqli_query($db, $query);
+	while($row1 = mysqli_fetch_array($result1))
+		$entries = $row1['entries'];
+	$pages = ceil($entries/$perpage);
+	$navbuttons="";
+	if($page > 1)
+	{
+		$navbuttons .= "<input type=\"button\" onClick=\"archive_previous_1v1($page)\" style=\"float:left\" value=\"Previous\">";
+	}
+	$navbuttons .= "Viewing page $page of $pages";
+	if($page < $pages)
+	{
+		$navbuttons .= "<input type=\"button\" onClick=\"archive_next_1v1($page)\" style=\"float:right\" value=\"Next\" >";
+	}
+	$table = "	<p>$navbuttons</p>
+				<table id=\"archive_1v1\">
+								<thead>
+								<tr bgcolor=\"#FFCC33\">
+									<th valign=\"top\" class=\"bodyblack_bold\">Player</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Score</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Player</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Score</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Date</th>
+								</tr>
+							</thead><tbody> ";
+								
+								
+							
+
+	$query = "SELECT match_id, p1.first_name AS p_name_one, score_one, p2.first_name AS p_name_two, score_two, date_format(date, '%b %e') as date
+				FROM one_v_one, players p1, players p2
+				WHERE p1.player_id = player_one
+				AND   p2.player_id = player_two
+				ORDER BY match_id DESC LIMIT $min, $perpage;";
+	$result = mysqli_query($db, $query);
+	while($row = mysqli_fetch_array($result))
+	{
+		if($row['score_one'] < $row['score_two'])
+		{
+			$style="style=\"background-color: #FFB8B8\"";
+			$style1="style=\"background-color:#C9FFC9\"";
+		}
+		else
+		{
+			$style="style=\"background-color:#C9FFC9\"";
+			$style1="style=\"background-color: #FFB8B8\"";
+		}
+		$table .= "<tr>";
+			$table .= "<td $style>";
+				$table .= $row['p_name_one'];
+			$table .= "</td>";
+			$table .= "<td $style>";
+				$table .= $row['score_one'];
+			$table .= "</td>";
+			$table .= "<td $style1>";
+				$table .= $row['p_name_two'];
+			$table .= "</td>";
+			$table .= "<td $style1>";
+				$table .= $row['score_two'];
+			$table .= "</td>";
+			$table .= "<td>";
+				$table .= $row['date'];
+			$table .= "</td>";
+		$table .= "</tr>";
+	}
+	$table .= "</tbody>
+							</table>";
+	echo $table;
+}
+
+function gen_2v1_archive( $page )
+{
+	$db = db_connect();
+	$perpage = 20;
+	$min = ($page-1) * $perpage;
+	$query = "SELECT count(*) as entries FROM two_v_one;";
+	$result1 = mysqli_query($db, $query);
+	while($row1 = mysqli_fetch_array($result1))
+		$entries = $row1['entries'];
+	$pages = ceil($entries/$perpage);
+	$navbuttons="";
+	if($page > 1)
+	{
+		$navbuttons .= "<input type=\"button\" onClick=\"archive_previous_2v1($page)\" style=\"float:left\" value=\"Previous\">";
+	}
+	$navbuttons .= "Viewing page $page of $pages";
+	if($page < $pages)
+	{
+		$navbuttons .= "<input type=\"button\" onClick=\"archive_next_2v1($page)\" style=\"float:right\" value=\"Next\" >";
+	}
+	$table = "	<p>$navbuttons</p>
+				<table id=\"modify_1v1\">
+								<thead>
+								<tr bgcolor=\"#FFCC33\">
+									<th valign=\"top\" class=\"bodyblack_bold\">Team</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Score</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Player</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Score</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Date</th>
+								</tr>
+							</thead><tbody> ";
+								
+								
+							
+
+	$query = "SELECT match_id, p1.first_name AS t_name_one, p3.first_name AS t_name_two, team_score AS score_one, p2.first_name AS p_name_two, player_score AS score_two, date_format(date, '%b %e') as date_played
+				FROM two_v_one m, players p1, players p2, players p3, teams t
+				WHERE p2.player_id = m.player_id
+				AND   t.team_id    = m.team_id
+				AND   p1.player_id = t.player_id_one
+				AND   p3.player_id = t.player_id_two
+				ORDER BY match_id DESC LIMIT $min, $perpage;";
+	$result = mysqli_query($db, $query);
+	while($row = mysqli_fetch_array($result))
+	{
+		if($row['score_one'] < $row['score_two'])
+		{
+			$style="style=\"background-color: #FFB8B8\"";
+			$style1="style=\"background-color:#C9FFC9\"";
+		}
+		else
+		{
+			$style="style=\"background-color:#C9FFC9\"";
+			$style1="style=\"background-color: #FFB8B8\"";
+		}
+		$table .= "<tr>";
+			$table .= "<td $style>";
+				$table .= ($row['t_name_one'])." and ".($row['t_name_two']);
+			$table .= "</td>";
+			$table .= "<td $style>";
+				$table .= $row['score_one'];
+			$table .= "</td>";
+			$table .= "<td $style1>";
+				$table .= $row['p_name_two'];
+			$table .= "</td>";
+			$table .= "<td $style1>";
+				$table .= $row['score_two'];
+			$table .= "</td>";
+			$table .= "<td>";
+				$table .= $row['date_played'];
+			$table .= "</td>";
+		$table .= "</tr>";
+	}
+	$table .= "</tbody>
+							</table>";
+	echo $table;
+}
+
+function gen_2v2_archive( $page )
+{
+	$db = db_connect();
+	$perpage = 20;
+	$min = ($page-1) * $perpage;
+	$query = "SELECT count(*) as entries FROM two_v_two;";
+	$result1 = mysqli_query($db, $query);
+	while($row1 = mysqli_fetch_array($result1))
+		$entries = $row1['entries'];
+	$pages = ceil($entries/$perpage);
+	$navbuttons="";
+	if($page > 1)
+	{
+		$navbuttons .= "<input type=\"button\" onClick=\"archive_previous_2v2($page)\" style=\"float:left\" value=\"Previous\">";
+	}
+	$navbuttons .= "Viewing page $page of $pages";
+	if($page < $pages)
+	{
+		$navbuttons .= "<input type=\"button\" onClick=\"archive_next_2v2($page)\" style=\"float:right\" value=\"Next\" >";
+	}
+	$table = "	<p>$navbuttons</p>
+				<table id=\"modify_1v1\">
+								<thead>
+								<tr bgcolor=\"#FFCC33\">
+									<th valign=\"top\" class=\"bodyblack_bold\">Team</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Score</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Team</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Score</th>
+									<th valign=\"top\" class=\"bodyblack_bold\">Date</th>
+								</tr>
+							</thead><tbody> ";
+								
+								
+							
+
+	$query = "SELECT 	match_id, 
+						p1.first_name AS t_name_one, 
+						p3.first_name AS t_name_two, 
+						team_one_score AS score_one, 
+						p2.first_name AS t1_name_one, 
+						p4.first_name AS t1_name_two,
+						team_two_score AS score_two, 
+						date_format(date, '%b %e') AS date_played
+				FROM two_v_two m, players p1, players p2, players p3, players p4, teams t, teams t1
+				WHERE t1.team_id   = m.team_id_two
+				AND   t.team_id    = m.team_id_one
+				AND   p1.player_id = t.player_id_one
+				AND   p3.player_id = t.player_id_two
+				AND   p2.player_id = t1.player_id_one
+				AND   p4.player_id = t1.player_id_two
+				ORDER BY match_id DESC LIMIT $min, $perpage;";
+	$result = mysqli_query($db, $query);
+	while($row = mysqli_fetch_array($result))
+	{
+		if($row['score_one'] < $row['score_two'])
+		{
+			$style="style=\"background-color: #FFB8B8\"";
+			$style1="style=\"background-color:#C9FFC9\"";
+		}
+		else
+		{
+			$style="style=\"background-color:#C9FFC9\"";
+			$style1="style=\"background-color: #FFB8B8\"";
+		}
+		$table .= "<tr>";
+			$table .= "<td $style>";
+				$table .= ($row['t_name_one'])." and ".($row['t_name_two']);
+			$table .= "</td>";
+			$table .= "<td $style>";
+				$table .= $row['score_one'];
+			$table .= "</td>";
+			$table .= "<td $style1>";
+				$table .= ($row['t1_name_one'])." and ".($row['t1_name_two']);
+			$table .= "</td>";
+			$table .= "<td $style1>";
+				$table .= $row['score_two'];
+			$table .= "</td>";
+			$table .= "<td>";
+				$table .= $row['date_played'];
+			$table .= "</td>";
+		$table .= "</tr>";
+	}
+	$table .= "</tbody>
+							</table>";
 	echo $table;
 }
 

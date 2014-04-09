@@ -1,46 +1,8 @@
 <?php
 session_start();
-include('database_connection.php');
-$_SESSION["logged_in"] = 0;
-if ( isset( $_POST["submit"] ) )
+if(! ($_SESSION["admin"] == 1))
 {
-	$e = trim($_POST["username"]);
-	$p = trim($_POST["pwd"]);
-	$e = mysql_real_escape_string($e);
-	if(strlen($e) >0 && strlen($p) >0)
-	{
-		$db = db_connect();
-		if (!$db)
-		{
-			$_SESSION["pageerror"] = "Error Connecting to Database";
-		}
-		else
-		{
-			$query = "SELECT user_id, password from users where username = '$e' AND status = 1;";
-			$result = mysqli_query($db, $query);
-			$row = mysqli_fetch_assoc($result);
-			if(crypt($p, $row['password']) == $row['password'])
-			{
-				$_SESSION["logged_in"] = 1;
-				$_SESSION["admin"] = 1;
-				$_SESSION["username"] = $e;
-				$_SESSION["user_id"] = $row['user_id'];
-				mysqli_close($db);
-				$_SESSION["pageerror"] = "SUCCESS";
-				header("Location:admin.php");
-			}
-			else
-			{
-				$_SESSION["pageerror"] = "Incorrect username/password.";
-				header("Location:login.php");
-			}
-		}
-	}
-	else
-	{
-		$_SESSION["pageerror"] = "Incorrect username/password.";
-		header("Location:login.php");
-	}
+	header("Location:login.php");
 }
 ?>
 <!DOCTYPE HTML>
@@ -66,6 +28,8 @@ if ( isset( $_POST["submit"] ) )
 			<link rel="stylesheet" href="css/style.css" />
 			<link rel="stylesheet" href="css/style-wide.css" />
 		</noscript>
+		<script src="js/sorttable.js"></script>
+		<script src="js/admin-ondemand.js"></script>
 		<!--[if lte IE 9]><link rel="stylesheet" href="css/ie9.css" /><![endif]-->
 		<!--[if lte IE 8]><link rel="stylesheet" href="css/ie8.css" /><![endif]-->
 	</head>
@@ -79,8 +43,8 @@ if ( isset( $_POST["submit"] ) )
 					<!-- Logo -->
 						<div id="logo">
 							<span class="image avatar48"><img src="images/avatar.jpg" alt="" /></span>
-							<h1 id="title">Login</h1>
-							<span class="byline">Racquetball Stats Admin Login</span>
+							<h1 id="title">Admin</h1>
+							<span class="byline">Racquetball Stats Admin</span>
 						</div>
 
 					<!-- Nav -->
@@ -99,8 +63,10 @@ if ( isset( $_POST["submit"] ) )
 							
 							-->
 							<ul>
-								<li><a href="#top" id="top-link" class="skel-panels-ignoreHref"><span class="fa fa-wrench">Admin Login</span></a></li>
-								<li><a href="index.php"><span class="fa fa-sign-out">Overview</span></a></li>
+								<li><a href="#top" id="top-link" class="skel-panels-ignoreHref"><span class="fa fa-wrench">Admin</span></a></li>
+								<li><a href="#main" id="add_player-link" class="skel-panels-ignoreHref"><span class="fa fa-group">Add a Player</span></a></li>
+								<li><a href="#main" id="modify_game-link" class="skel-panels-ignoreHref"><span class="fa fa-gamepad">Remove a Game</span></a></li>
+								<li><a href="logout.php"><span class="fa fa-sign-out">Logout</span></a></li>
 							</ul>
 						</nav>
 						
@@ -110,9 +76,9 @@ if ( isset( $_POST["submit"] ) )
 
 					<!-- Social Icons -->
 						<ul class="icons">
-							<li><a href="#" class="fa fa-sign-in solo"><span>Sign In</span></a></li>
+							<li><a href="login.php" class="fa fa-sign-in solo"><span>Sign In</span></a></li>
 							<li><a href="#" class="fa fa-level-up solo"><span>Create Account</span></a></li>
-							<li><a href="#" class="fa fa-sign-out solo"><span>Sign Out</span></a></li>
+							<li><a href="logout.php" class="fa fa-sign-out solo"><span>Sign Out</span></a></li>
 						</ul>
 				
 				</div>
@@ -125,22 +91,27 @@ if ( isset( $_POST["submit"] ) )
 				<!-- Intro -->
 					<section id="top" class="one">
 						<div class="container">
-						</br>
-							<header>
-								<h2 class="alt">
-									Sign In
-								</h2>
-							</header>
+							<h1>
+								Welcome <?php echo $_SESSION["username"]; ?>!
+							</h1>
+							<p>
+								This is a secure page with the ability to add a player, which automatically generates new teams based on the players.
+								Games can also be modified or removed in case of an entry mistake.
+								Javascript will be used to modify the div id="main_admin"
+							</p>
 						</div>
 					</section>
-					<section id="login" class="two">
-							<form action="login.php" method="post">
-                                <p>Username: <input class= "input-login" type="text" name="username" id="username" /></p>
-		                        <p>Password: <input class= "input-login" type="password" name="pwd" id="pwd" /></p>
-		                        <p><input class ="button button-login"type="submit" name="submit" value="Submit" id="submit"/></p>
-		                        <div id="pageerror"><?php print $_SESSION["pageerror"]; $_SESSION["pageerror"] = "" ?></div>
-		            	    </form>
+					<section id="main" class="two">
+						<div class="container">
+							<p>Body of the admin page with all items.
+							</p>
+							<div id="main_admin">
+
+							</div>
+
+						</div>
 					</section>
+					
 			
 			</div>
 
